@@ -9,6 +9,10 @@ gem 'jquery-rails'
 gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 
+gem 'omniauth-spotify'
+gem 'omniauth-oauth2', '~> 1.3.1'
+gem 'dotenv-rails'
+
 group :development do
   gem 'web-console', '~> 2.0'
   gem 'spring'
