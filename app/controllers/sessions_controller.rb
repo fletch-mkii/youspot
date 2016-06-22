@@ -14,7 +14,6 @@ class SessionsController < ApplicationController
     spot_hash = request.env['omniauth.auth'].to_hash
     spot_username = spot_hash["uid"]
 
-    binding.pry
     render text: spot_hash
     session.clear
   end
