@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   root to: "homes#index"
 
-  get '/auth/spotify/callback', to: 'homes#create'
+  resources :sessions
+
+  get '/auth/spotify/callback', to: 'sessions#create'
 end

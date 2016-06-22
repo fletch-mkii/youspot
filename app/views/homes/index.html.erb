@@ -1,12 +1,20 @@
-<form>
-  Youtube Link<br>
-  <input type="text" name="youtube"><br>
-  Spotify Link<br>
-  <input type="text" name="spotify">
-  </br>
-  <input type="submit" value="Merge">
-</form>
+<form action="/sessions/new" method="get">
+    <div>
+      <%= label :youtube_username, "Youtube Username" %><br>
+      <%= text_field_tag :youtube_username, "BEARDBRUHS" %>
+    </div>
 
-<ul>
-  <li><%= link_to 'Spotify', '/auth/spotify' %></li>
-</ul>
+    <div>
+      <%= label :youtube_playlist, "Youtube Playlist" %><br>
+      <%= text_field_tag :youtube_playlist, "yout test play" %>
+    </div>
+
+    <div>
+      <%= label :spotify_playlist, "Spotify Playlist" %><br>
+      <%= text_field_tag :spotify_playlist, "spot test play" %>
+    </div>
+
+    <div>
+      <%= submit_tag "Merge" %>
+    </div>
+</form>
