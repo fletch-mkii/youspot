@@ -11,6 +11,8 @@ class SessionsController < ApplicationController
   end
 
   def create
+    Session.transfer_playlist(session[:youtube_username],session[:youtube_playlist],session[:spotify_playlist])
+
     spot_hash = request.env['omniauth.auth'].to_hash
     spot_username = spot_hash["uid"]
 

@@ -70,6 +70,7 @@ GEM
     globalid (0.3.6)
       activesupport (>= 4.1.0)
     hashie (3.4.4)
+    httpclient (2.8.0)
     i18n (0.7.0)
     jbuilder (2.4.1)
       activesupport (>= 3.0.0, < 5.1)
@@ -207,6 +208,7 @@ DEPENDENCIES
   capybara
   coffee-rails (~> 4.1.0)
   dotenv-rails
+  httpclient
   jbuilder (~> 2.0)
   jquery-rails
   launchy

@@ -1,31 +1,58 @@
 class Session < ActiveRecord::Base
 
-  #require "httpclient"
+  require "httpclient"
 
   YOUTUBE_BASE_QUERY = "https://www.googleapis.com/youtube/v3/"
   SPOTIFY_BASE_QUERY = "https://api.spotify.com/v1/"
 
-  def find_channel_id(username)
-    query = "channels?part=id&forUsername=#{username}&key=#{ENV[YOUTUBE_KEY]}"
+  def self.transfer_playlist(youtube_username,youtube_playlist,spotify_playlist)
+    find_channel_id(youtube_username)
+
+    if playlist_exists?
+      #begin searching playlist for matches on spotify
+    end
   end
 
-  def search_youtube_playlist
+  private
+  def self.find_channel_id(username)
+    query = "channels?part=id&forUsername=#{username}&key=#{ENV['YOUTUBE_KEY']}"
+
+    response = HTTPClient.new.get(YOUTUBE_BASE_QUERY + query)
+    array_response = response.body.gsub(/\s+|\\|\"/, "").split(",")
+    if array_response.length <= 5
+      raise Exception
+    else
+      return array_response[-1][3..-4]
+    end
   end
 
-  def song_exists?
+  def self.playlist_exists?
+    #checks if playlist exists on specified youtube channel
   end
 
-  def playlist_exists?
+  def self.search_spotify_playlist
+    #looks through youtube playlist one by one and checks if each song is on spotify
   end
 
-  def search_spotify_playlist
+  def self.parse_titles
+    #normalizes format of youtube video titles to ensure artist/song are looked up properly
   end
 
-  def add_track
+  def self.song_exists?
+    #checks if song exists on spotify
+  end
+
+  def self.add_track
+    #adds track if it exists
   end
 end
 
+
+
 =begin
+httpclient base response example from find_channel_id method
+{}"{\n \"kind\": \"youtube#channelListResponse\",\n \"etag\": \"\\\"5g01s4-wS2b4VpScndqCYc5Y-8k/yRXaijMXb12z47BWtQ2z6odCmME\\\"\",\n \"pageInfo\": {\n  \"totalResults\": 1,\n  \"resultsPerPage\": 5\n },\n \"items\": [\n  {\n   \"kind\": \"youtube#channel\",\n   \"etag\": \"\\\"5g01s4-wS2b4VpScndqCYc5Y-8k/W1D1X7hgu1tWbH85X4IDQNduol0\\\"\",\n   \"id\": \"UCl84oPPKuECe1PbIwDSN1Cg\"\n  }\n ]\n}\n"
+
 
 ###YOUTUBE API STUFF###
 Youtube get channel ID api call (beardbros)
