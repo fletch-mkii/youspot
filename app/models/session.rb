@@ -1,14 +1,16 @@
 class Session < ActiveRecord::Base
 
+  require 'httparty'
   require "httpclient"
+  require 'json'
 
   YOUTUBE_BASE_QUERY = "https://www.googleapis.com/youtube/v3/"
   SPOTIFY_BASE_QUERY = "https://api.spotify.com/v1/"
 
   def self.transfer_playlist(youtube_username,youtube_playlist,spotify_playlist)
-    find_channel_id(youtube_username)
+    ch_id = find_channel_id(youtube_username)
 
-    if playlist_exists?
+    if playlist_exists?(ch_id)
       #begin searching playlist for matches on spotify
     end
   end
@@ -26,7 +28,12 @@ class Session < ActiveRecord::Base
     end
   end
 
-  def self.playlist_exists?
+  def self.playlist_exists?(channel_id)
+    query = "playlists?part=snippet&channelId=#{channel_id}&key=#{ENV['YOUTUBE_KEY']}&maxResults=50"
+
+    response = HTTPClient.new.get(YOUTUBE_BASE_QUERY + query)
+    json_response = JSON.parse(response)
+    binding.pry
     #checks if playlist exists on specified youtube channel
   end
 
