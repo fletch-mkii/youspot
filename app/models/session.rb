@@ -7,38 +7,43 @@ class Session < ActiveRecord::Base
   YOUTUBE_BASE_QUERY = "https://www.googleapis.com/youtube/v3/"
   SPOTIFY_BASE_QUERY = "https://api.spotify.com/v1/"
 
-  def self.transfer_playlist(youtube_username,youtube_playlist,spotify_playlist)
-    ch_id = find_channel_id(youtube_username)
+  def self.transfer_playlist(youtube_username, youtube_playlist, spotify_playlist)
+    ch_id = get_channel_id(youtube_username)
 
-    if playlist_exists?(ch_id)
+    if playlist_exists?(ch_id, youtube_playlist)
       #begin searching playlist for matches on spotify
     end
   end
 
   private
-  def self.find_channel_id(username)
+  def self.get_channel_id(username)
     query = "channels?part=id&forUsername=#{username}&key=#{ENV['YOUTUBE_KEY']}"
+    response = HTTParty.get(YOUTUBE_BASE_QUERY + query)
+    parsed = response.parsed_response
 
-    response = HTTPClient.new.get(YOUTUBE_BASE_QUERY + query)
-    array_response = response.body.gsub(/\s+|\\|\"/, "").split(",")
-    if array_response.length <= 5
-      raise Exception
+    if parsed["items"].length != 1
+      raise MultipleMatchError
     else
-      return array_response[-1][3..-4]
+      return parsed["items"][0]["id"]
     end
   end
 
-  def self.playlist_exists?(channel_id)
+  def self.get_playlist_id(channel_id, tube_playlist)
     query = "playlists?part=snippet&channelId=#{channel_id}&key=#{ENV['YOUTUBE_KEY']}&maxResults=50"
+    response = HTTParty.get(YOUTUBE_BASE_QUERY + query)
+    parsed = response.parsed_response
 
-    response = HTTPClient.new.get(YOUTUBE_BASE_QUERY + query)
-    json_response = JSON.parse(response)
-    binding.pry
-    #checks if playlist exists on specified youtube channel
+    parsed["items"].each do |playlist|
+      unless playlist["snippet"]["title"].downcase.include?(tube_playlist.downcase)
+        next
+      else
+        return playlist["id"]
+      end
+    end
   end
 
-  def self.search_spotify_playlist
-    #looks through youtube playlist one by one and checks if each song is on spotify
+  def self.list_of_tracks
+    #loops through playlist, outputs array of song hashes with artist/title
   end
 
   def self.parse_titles
@@ -49,15 +54,23 @@ class Session < ActiveRecord::Base
     #checks if song exists on spotify
   end
 
+  def self.search_spotify_playlist
+    #looks through youtube playlist one by one and checks if each song is on spotify
+  end
+
   def self.add_track
     #adds track if it exists
   end
 end
 
-
+class MultipleMatchError < StandardError
+  def initialize(msg="Multiple channels found from username input")
+    super
+  end
+end
 
 =begin
-httpclient base response example from find_channel_id method
+httpclient base response example from get_channel_id method
 {}"{\n \"kind\": \"youtube#channelListResponse\",\n \"etag\": \"\\\"5g01s4-wS2b4VpScndqCYc5Y-8k/yRXaijMXb12z47BWtQ2z6odCmME\\\"\",\n \"pageInfo\": {\n  \"totalResults\": 1,\n  \"resultsPerPage\": 5\n },\n \"items\": [\n  {\n   \"kind\": \"youtube#channel\",\n   \"etag\": \"\\\"5g01s4-wS2b4VpScndqCYc5Y-8k/W1D1X7hgu1tWbH85X4IDQNduol0\\\"\",\n   \"id\": \"UCl84oPPKuECe1PbIwDSN1Cg\"\n  }\n ]\n}\n"
 
 
