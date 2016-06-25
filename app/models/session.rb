@@ -9,10 +9,8 @@ class Session < ActiveRecord::Base
 
   def self.transfer_playlist(youtube_username, youtube_playlist, spotify_playlist)
     ch_id = get_channel_id(youtube_username)
-
-    if playlist_exists?(ch_id, youtube_playlist)
-      #begin searching playlist for matches on spotify
-    end
+    pl_id = get_playlist_id(ch_id, youtube_playlist)
+    tracklist = list_of_tracks(pl_id)
   end
 
   private
@@ -42,8 +40,19 @@ class Session < ActiveRecord::Base
     end
   end
 
-  def self.list_of_tracks
-    #loops through playlist, outputs array of song hashes with artist/title
+  def self.list_of_tracks(playlist_id)
+    #currently only works for playlists of size 50 or lower, need to find workaround for 51-200 sized lists
+    query = "playlistItems?part=id,snippet&playlistId=#{playlist_id}&key=#{ENV['YOUTUBE_KEY']}&maxResults=50"
+    response = HTTParty.get(YOUTUBE_BASE_QUERY + query)
+    parsed = response.parsed_response
+
+
+    unparsed_tracklist = []
+    parsed["items"].each do |track|
+      unparsed_tracklist << track["snippet"]["title"]
+    end
+
+    return parse_titles(unparsed_tracklist)
   end
 
   def self.parse_titles
