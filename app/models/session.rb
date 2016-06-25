@@ -46,7 +46,6 @@ class Session < ActiveRecord::Base
     response = HTTParty.get(YOUTUBE_BASE_QUERY + query)
     parsed = response.parsed_response
 
-
     unparsed_tracklist = []
     parsed["items"].each do |track|
       unparsed_tracklist << track["snippet"]["title"]
@@ -55,8 +54,20 @@ class Session < ActiveRecord::Base
     return parse_titles(unparsed_tracklist)
   end
 
-  def self.parse_titles
-    #normalizes format of youtube video titles to ensure artist/song are looked up properly
+  def self.parse_titles(tracklist)
+    parsed_tracklist = []
+    tracklist.each do |track|
+      if track[-1] == ")"
+        track = track[0..(track.index("(") - 1)]
+      elsif track[-1] == "]"
+        track = track[0..(track.index("[") - 1)]
+      end
+      track = track.split("-")
+      track[0] = track[0].strip
+      track[1] = track[1].strip
+      parsed_tracklist << track
+    end
+    return parsed_tracklist
   end
 
   def self.song_exists?
