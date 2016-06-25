@@ -58,9 +58,9 @@ class Session < ActiveRecord::Base
     parsed_tracklist = []
     tracklist.each do |track|
       if track[-1] == ")"
-        track = track[0..(track.index("(") - 1)]
+        track = track[0..(track.index(/\(.*\)/) - 1)]
       elsif track[-1] == "]"
-        track = track[0..(track.index("[") - 1)]
+        track = track[0..(track.index(/\[.*\]/) - 1)]
       end
       track = track.split("-")
       track[0] = track[0].strip
