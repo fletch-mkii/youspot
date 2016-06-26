@@ -12,7 +12,6 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'omniauth-spotify'
 gem 'omniauth-oauth2', '~> 1.3.1'
 gem 'dotenv-rails'
-gem 'httpclient'
 gem 'httparty'
 
 group :development do

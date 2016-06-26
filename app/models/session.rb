@@ -1,7 +1,6 @@
 class Session < ActiveRecord::Base
 
   require 'httparty'
-  require "httpclient"
   require 'json'
 
   YOUTUBE_BASE_QUERY = "https://www.googleapis.com/youtube/v3/"
@@ -90,9 +89,6 @@ class MultipleMatchError < StandardError
 end
 
 =begin
-httpclient base response example from get_channel_id method
-{}"{\n \"kind\": \"youtube#channelListResponse\",\n \"etag\": \"\\\"5g01s4-wS2b4VpScndqCYc5Y-8k/yRXaijMXb12z47BWtQ2z6odCmME\\\"\",\n \"pageInfo\": {\n  \"totalResults\": 1,\n  \"resultsPerPage\": 5\n },\n \"items\": [\n  {\n   \"kind\": \"youtube#channel\",\n   \"etag\": \"\\\"5g01s4-wS2b4VpScndqCYc5Y-8k/W1D1X7hgu1tWbH85X4IDQNduol0\\\"\",\n   \"id\": \"UCl84oPPKuECe1PbIwDSN1Cg\"\n  }\n ]\n}\n"
-
 
 ###YOUTUBE API STUFF###
 Youtube get channel ID api call (beardbros)
