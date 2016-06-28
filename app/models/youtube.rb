@@ -1,21 +1,19 @@
-class Session < ActiveRecord::Base
+class Youtube
 
   require 'httparty'
-  require 'json'
 
-  YOUTUBE_BASE_QUERY = "https://www.googleapis.com/youtube/v3/"
-  SPOTIFY_BASE_QUERY = "https://api.spotify.com/v1/"
+  BASE_QUERY = "https://www.googleapis.com/youtube/v3/"
 
-  def self.transfer_playlist(youtube_username, youtube_playlist, spotify_playlist)
-    ch_id = get_channel_id(youtube_username)
-    pl_id = get_playlist_id(ch_id, youtube_playlist)
+  def self.transfer_playlist(username, playlist)
+    ch_id = get_channel_id(username)
+    pl_id = get_playlist_id(ch_id, playlist)
     tracklist = list_of_tracks(pl_id)
   end
 
   private
   def self.get_channel_id(username)
     query = "channels?part=id&forUsername=#{username}&key=#{ENV['YOUTUBE_KEY']}"
-    response = HTTParty.get(YOUTUBE_BASE_QUERY + query)
+    response = HTTParty.get(BASE_QUERY + query)
     parsed = response.parsed_response
 
     if parsed["items"].length != 1
@@ -27,7 +25,7 @@ class Session < ActiveRecord::Base
 
   def self.get_playlist_id(channel_id, tube_playlist)
     query = "playlists?part=snippet&channelId=#{channel_id}&key=#{ENV['YOUTUBE_KEY']}&maxResults=50"
-    response = HTTParty.get(YOUTUBE_BASE_QUERY + query)
+    response = HTTParty.get(BASE_QUERY + query)
     parsed = response.parsed_response
 
     parsed["items"].each do |playlist|
@@ -42,7 +40,7 @@ class Session < ActiveRecord::Base
   def self.list_of_tracks(playlist_id)
     #currently only works for playlists of size 50 or lower, need to find workaround for 51-200 sized lists
     query = "playlistItems?part=id,snippet&playlistId=#{playlist_id}&key=#{ENV['YOUTUBE_KEY']}&maxResults=50"
-    response = HTTParty.get(YOUTUBE_BASE_QUERY + query)
+    response = HTTParty.get(BASE_QUERY + query)
     parsed = response.parsed_response
 
     unparsed_tracklist = []
@@ -67,18 +65,6 @@ class Session < ActiveRecord::Base
       parsed_tracklist << track
     end
     return parsed_tracklist
-  end
-
-  def self.song_exists?
-    #checks if song exists on spotify
-  end
-
-  def self.search_spotify_playlist
-    #looks through youtube playlist one by one and checks if each song is on spotify
-  end
-
-  def self.add_track
-    #adds track if it exists
   end
 end
 
