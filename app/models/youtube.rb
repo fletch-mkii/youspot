@@ -8,6 +8,7 @@ class Youtube
     ch_id = get_channel_id(username)
     pl_id = get_playlist_id(ch_id, playlist)
     tracklist = list_of_tracks(pl_id)
+    return tracklist
   end
 
   private
