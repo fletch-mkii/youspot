@@ -5,12 +5,14 @@ class Spotify
   BASE_QUERY = "https://api.spotify.com/v1/"
 
   def self.add_tracks(tracks_array, playlist)
+    pl_id = playlist_id(playlist)
     id_tracklist = search_spotify(tracks_array, playlist)
     id_tracklist.each do |track|
-      unless exists_in_playlist?(track)
+      unless exists_in_playlist?(track,play_id)
         #add track to playlist query
         query = "users/{user_id}/playlists/{playlist_id}/tracks"
       end
+    end
   end
 
   def self.search_spotify(tracks, playlist)
@@ -29,7 +31,21 @@ class Spotify
     return track_id_list
   end
 
-  def self.exists_in_playlist?(track_id,playlsit_id)
+  def self.playlists
+    query = "me"#/playlists&key=#{ENV["SPOTIFY_ID"]}"
+    response = HTTParty.get(BASE_QUERY + query)
+    parsed = response.parsed_response
+  end
+
+  def self.playlist_id(playlist_name)
+    playlists()
+    binding.pry
+    query = "/v1/search?q=#{playlist_name}&type=playlist"
+    response = HTTParty.get(BASE_QUERY + query)
+    parsed = response.parsed_response
+  end
+
+  def self.exists_in_playlist?(track_id,playlist_id)
     #looks through youtube playlist one by one and checks if each song is already in the desired playlist
   end
 
@@ -40,6 +56,7 @@ class Spotify
       else
         return [false, nil]
       end
+    end
   end
 end
 
