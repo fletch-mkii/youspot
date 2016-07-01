@@ -13,6 +13,7 @@ gem 'omniauth-spotify'
 gem 'omniauth-oauth2', '~> 1.3.1'
 gem 'dotenv-rails'
 gem 'httparty'
+gem 'rspotify'
 
 group :development do
   gem 'web-console', '~> 2.0'
